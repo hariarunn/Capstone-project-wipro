@@ -1,0 +1,97 @@
+/* =========================
+   Tailwind + Bootstrap base
+   ========================= */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Bootstrap (optional helpers/components) */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* =========================
+   Base tweaks
+   ========================= */
+@layer base {
+  html, body { height: 100%; }
+  body { @apply bg-white dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100; }
+  ::selection { background: rgba(99,102,241,.25); }
+}
+
+/* =========================
+   Global utilities (useable with @apply in component SCSS)
+   ========================= */
+@layer utilities {
+  /* Surfaces */
+  .glass     { @apply bg-white/70 dark:bg-neutral-800/60 backdrop-blur-md border border-white/30 dark:border-neutral-700/50; }
+  .card-base { @apply rounded-2xl shadow-sm hover:shadow-lg transition-shadow; }
+
+  /* Buttons */
+  .btn-primary { @apply inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 transition-colors disabled:opacity-60 disabled:pointer-events-none; }
+  .btn-ghost  { @apply inline-flex items-center justify-center rounded-xl px-3 py-2 bg-transparent hover:bg-black/5 dark:hover:bg-white/5 transition-colors; }
+  .btn-icon   { @apply btn-ghost p-2 rounded-full; }
+
+  /* Chips / Badges */
+  .chip       { @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm bg-neutral-100 dark:bg-neutral-800; }
+  .badge      { @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs bg-neutral-200 text-neutral-800 dark:bg-neutral-700 dark:text-neutral-200; }
+  .badge-warn { @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs bg-amber-100 text-amber-900 dark:bg-amber-900/50 dark:text-amber-100; }
+  .badge.prime { @apply bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-200; }
+
+  /* Form elements */
+  .input  { @apply w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-4 py-2 outline-none focus:ring-2 focus:ring-indigo-500; }
+  .select { @apply w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500; }
+
+  /* Typography & links */
+  .heading { @apply text-xl md:text-2xl font-semibold tracking-tight; }
+  .subtle  { @apply text-sm text-neutral-500 dark:text-neutral-400; }
+  .link    { @apply text-indigo-600 hover:underline dark:text-indigo-400; }
+
+  /* Icons / ratings */
+  .rating-star { @apply w-4 h-4 fill-yellow-400; }
+
+  /* Micro-interactions */
+  .hover-pop       { @apply transition-transform; }
+  .hover-pop:hover { transform: translateY(-1px) scale(1.01); }
+
+  /* Fade in */
+  .animate-fade-in { animation: fade-in .35s ease-out both; }
+}
+
+/* =========================
+   Animations & effects
+   ========================= */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes hover-pop {
+  50% { transform: scale(1.03); }
+}
+
+/* =========================
+   Skeleton shimmer
+   ========================= */
+@keyframes skeleton-shimmer {
+  100% { transform: translateX(100%); }
+}
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: rgb(229 231 235); /* neutral-200 */
+}
+:root.dark .skeleton,
+.dark .skeleton {
+  background-color: rgb(38 38 38); /* neutral-800 */
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.6) 50%,
+    rgba(255,255,255,0) 100%);
+  animation: skeleton-shimmer 1.2s infinite;
+  opacity: .6;
+}

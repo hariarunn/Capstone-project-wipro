@@ -1,0 +1,25 @@
+:host { display: block; }
+
+/* Card */
+.product-card {
+  @apply rounded-2xl shadow-sm hover:shadow-lg bg-white dark:bg-neutral-900 overflow-hidden transition-transform;
+}
+.product-card .thumb {
+  @apply relative aspect-[4/5] overflow-hidden bg-neutral-100 dark:bg-neutral-800;
+}
+.product-card .thumb .img {
+  @apply w-full h-full object-cover transition-transform duration-300;
+}
+.product-card:hover .thumb .img { transform: scale(1.06); }
+.product-card .title { @apply text-sm font-medium line-clamp-2 min-h-[3rem]; }
+.product-card .rating { @apply flex items-center gap-1 mt-2; }
+.product-card .rating .reviews { @apply ml-1; }
+.product-card .price-row { @apply flex items-baseline gap-2 mt-2; }
+.product-card .price { @apply text-lg font-semibold; }
+.product-card .old { @apply text-sm; }
+.product-card .actions { @apply mt-3; }
+
+/* Badges (avoid overlap) */
+.badge.prime { @apply absolute top-2 left-2; }
+.badge-warn.stock { @apply absolute top-2 right-2; }
+.badge.discount { @apply absolute bottom-2 left-2; }

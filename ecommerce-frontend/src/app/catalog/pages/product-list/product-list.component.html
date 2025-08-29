@@ -1,0 +1,168 @@
+<section class="max-w-7xl mx-auto px-4 py-8 animate-fade-in">
+
+  <!-- Hero -->
+  <div class="rounded-3xl overflow-hidden mb-8 card-base bg-gradient-to-br from-indigo-50 via-white to-emerald-50 dark:from-neutral-900 dark:via-neutral-900 dark:to-neutral-900">
+    <div class="p-8 sm:p-12 flex flex-col sm:flex-row items-center gap-8">
+      <div class="flex-1">
+        <h1 class="text-3xl md:text-4xl font-bold leading-tight">Everything you need, delivered fast.</h1>
+        <p class="mt-3 subtle">Hand-picked deals on electronics, fashion & home. Prime-like delivery experience.</p>
+        <div class="mt-6 flex gap-3">
+          <a routerLink="/catalog" class="btn-primary hover-pop">Shop Now</a>
+          <button class="btn-ghost" (click)="seeAllDeals()">Today’s Deals</button>
+        </div>
+      </div>
+
+      <img [src]="heroUrl" alt="Headphones & music banner"
+           class="w-full sm:w-96 rounded-2xl shadow-md object-cover"
+           loading="eager" decoding="async" (error)="onHeroError()" />
+    </div>
+  </div>
+
+  <!-- Deals strip (hidden when already filtering deals) -->
+  <div class="mb-8" *ngIf="!isDealsMode && (deals$ | async)?.length">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="heading">Today’s Deals</h3>
+      <button class="btn-ghost" (click)="seeAllDeals()">See all</button>
+    </div>
+    <div class="flex gap-4 overflow-x-auto scroll-smooth pb-2">
+      <a class="min-w-[220px] rounded-2xl border border-neutral-200 dark:border-neutral-800 p-3 hover:shadow-md transition"
+         *ngFor="let d of (deals$ | async)" [routerLink]="['/catalog', d.id]">
+        <div class="relative">
+          <img class="w-full h-36 object-cover rounded-xl mb-2" [src]="d.imageUrl || fallback" [alt]="d.title" (error)="onImgError($event)">
+          <span class="badge absolute top-2 left-2">-{{ discount(d) }}%</span>
+        </div>
+        <div class="text-sm line-clamp-2">{{ d.title }}</div>
+        <div class="font-semibold">₹{{ d.price | number }}</div>
+        <div class="subtle line-through" *ngIf="d.oldPrice">₹{{ d.oldPrice | number }}</div>
+        <button class="btn-ghost w-full mt-2" (click)="addDealToCart(d, $event)">Add</button>
+      </a>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <!-- Filters -->
+    <aside class="lg:col-span-3 glass rounded-3xl p-5 h-max sticky top-24">
+      <form [formGroup]="form" class="space-y-5">
+        <h3 class="heading">Filters</h3>
+
+        <div *ngIf="isDealsMode"
+             class="rounded-xl border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50 dark:bg-emerald-900/20 p-3 flex items-center justify-between">
+          <span class="text-sm text-emerald-700 dark:text-emerald-200">Showing deals only</span>
+          <button type="button" class="btn-ghost" (click)="clearDeals()">Clear</button>
+        </div>
+
+        <div>
+          <label class="block font-medium mb-2">Search</label>
+          <input class="input" placeholder="Search products..." formControlName="q" />
+        </div>
+
+        <div>
+          <label class="block font-medium mb-2">Category</label>
+          <select class="select" formControlName="category">
+            <option>All</option>
+            <option *ngFor="let c of (categories$ | async)">{{ c }}</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-medium mb-2">Price (₹)</label>
+          <div class="flex items-center gap-3">
+            <input class="input w-24" placeholder="Min" formControlName="minPrice" />
+            <span>—</span>
+            <input class="input w-24" placeholder="Max" formControlName="maxPrice" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-medium mb-2">Rating</label>
+          <div class="flex items-center gap-2">
+            <button type="button" class="chip" (click)="setRatingFilter(4)">4★ & up</button>
+            <button type="button" class="chip" (click)="setRatingFilter(3)">3★ & up</button>
+            <button type="button" class="chip" (click)="setRatingFilter(0)">Any</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-medium mb-2">Sort by</label>
+          <select class="select" formControlName="sort">
+            <option value="relevance">Relevance</option>
+            <option value="priceAsc">Price: Low to High</option>
+            <option value="priceDesc">Price: High to Low</option>
+            <option value="newest">Newest First</option>
+          </select>
+        </div>
+
+        <div class="flex gap-2">
+          <button type="button" class="btn-ghost border border-neutral-200 dark:border-neutral-700" (click)="clearFilters()">Clear</button>
+        </div>
+      </form>
+    </aside>
+
+    <!-- Results -->
+    <div class="lg:col-span-9">
+      <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <p class="subtle">
+          Showing <strong>{{ (visible$ | async)?.length ?? 0 }}</strong>
+          of <strong>{{ (filtered$ | async)?.length ?? 0 }}</strong> results
+        </p>
+        <div class="flex gap-2">
+          <span class="chip">Prime</span>
+          <span class="chip">In Stock</span>
+          <span class="chip">Free Delivery</span>
+        </div>
+      </div>
+
+      <app-skeleton *ngIf="loading(); else grid" [count]="12"></app-skeleton>
+
+      <ng-template #grid>
+        <ng-container *ngIf="(visible$ | async) as items">
+          <div *ngIf="items.length; else empty" class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
+            <a class="product-card group"
+               *ngFor="let p of items; trackBy: trackById"
+               [routerLink]="['/catalog', p.id]">
+              <div class="thumb">
+                <img class="img" [src]="p.imageUrl || fallback" [alt]="p.title" (error)="onImgError($event)" loading="lazy" decoding="async" />
+                <span *ngIf="p.category === 'Audio'" class="badge prime">Prime</span>
+                <span *ngIf="!p.inStock" class="badge-warn stock">Out of stock</span>
+                <span *ngIf="p.oldPrice && p.price < p.oldPrice"
+                      class="badge discount">-{{ (100 - (p.price / p.oldPrice) * 100) | number:'1.0-0' }}%</span>
+              </div>
+              <div class="p-3">
+                <h3 class="title">{{ p.title }}</h3>
+                <div class="rating">
+                  <ng-container *ngFor="let s of [1,2,3,4,5]">
+                    <svg viewBox="0 0 24 24" class="rating-star" [ngClass]="{'opacity-40': s > Math.round(p.rating)}">
+                      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21Z"/>
+                    </svg>
+                  </ng-container>
+                  <span class="reviews subtle">({{ p.reviews | number }})</span>
+                </div>
+                <div class="price-row">
+                  <div class="price">₹{{ p.price | number }}</div>
+                  <div *ngIf="p.oldPrice" class="old subtle line-through">₹{{ p.oldPrice | number }}</div>
+                </div>
+                <div class="actions">
+                  <button class="btn-primary w-full" (click)="addToCart(p, $event)">Add to Cart</button>
+                  <span class="subtle text-center block mt-1" *ngIf="p.delivery">Free delivery by {{ p.delivery }}</span>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <div class="flex justify-center mt-6" *ngIf="hasMore$ | async">
+            <button class="btn-ghost border border-neutral-200 dark:border-neutral-700" (click)="loadMore()">Load more</button>
+          </div>
+          <div #ioSentinel class="h-1" *ngIf="hasMore$ | async"></div>
+
+          <ng-template #empty>
+            <div class="text-center border border-dashed border-neutral-300 dark:border-neutral-700 rounded-2xl p-10">
+              <div class="text-xl font-semibold mb-2">No products found</div>
+              <p class="subtle mb-4">Try adjusting your filters or search query.</p>
+              <button class="btn-ghost border border-neutral-200 dark:border-neutral-700" (click)="clearFilters()">Clear filters</button>
+            </div>
+          </ng-template>
+        </ng-container>
+      </ng-template>
+    </div>
+  </div>
+</section>

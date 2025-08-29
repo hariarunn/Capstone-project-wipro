@@ -1,0 +1,14 @@
+:host { display: block; }
+
+.main-image { aspect-ratio: 4 / 5; }
+.thumb-small {
+  @apply rounded-xl overflow-hidden border border-neutral-200 dark:border-neutral-800;
+  img { @apply w-full h-16 object-cover; }
+}
+
+.rating-star { @apply w-5 h-5 fill-current text-amber-500; }
+
+.rate-btn {
+  @apply p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition;
+  &.active { @apply bg-amber-100 dark:bg-amber-900/40; }
+}

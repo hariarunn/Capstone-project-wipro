@@ -1,0 +1,14 @@
+:host { display: block; }
+
+.qty {
+  display: inline-flex; align-items: center; gap: .25rem;
+  button { @apply w-8 h-8 rounded-lg bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700; }
+  input  { @apply w-12 text-center rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 py-1; }
+}
+
+.row { @apply flex justify-between py-1 text-sm; }
+.divider { @apply my-2 border-t border-neutral-200 dark:border-neutral-800; }
+.total { @apply text-base font-semibold; }
+
+.card-base { transition: transform .15s ease; }
+.card-base:hover { transform: translateY(-1px); }

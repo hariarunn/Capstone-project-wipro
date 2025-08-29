@@ -1,0 +1,182 @@
+<section class="max-w-7xl mx-auto px-4 py-8 animate-fade-in" *ngIf="product$ | async as p; else missing">
+  <nav class="text-sm subtle mb-4 flex items-center gap-2">
+    <a routerLink="/" class="link">Home</a><span>/</span>
+    <a routerLink="/catalog" class="link">Catalog</a><span>/</span>
+    <span class="text-neutral-700 dark:text-neutral-300">{{ p.title }}</span>
+  </nav>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <!-- Gallery -->
+    <div class="lg:col-span-6 grid grid-cols-6 gap-4">
+      <div class="col-span-1 hidden sm:flex flex-col gap-3">
+        <button class="thumb-small ring-2 ring-transparent focus:ring-indigo-500" (click)="setMain(p.imageUrl)">
+          <img [src]="p.imageUrl" alt="thumb" (error)="onImgError($event)" />
+        </button>
+        <button class="thumb-small" (click)="setMain(p.imageUrl)"><img [src]="p.imageUrl" alt="thumb" (error)="onImgError($event)" /></button>
+        <button class="thumb-small" (click)="setMain(p.imageUrl)"><img [src]="p.imageUrl" alt="thumb" (error)="onImgError($event)" /></button>
+      </div>
+      <div class="col-span-6 sm:col-span-5">
+        <div class="main-image card-base relative bg-neutral-100 dark:bg-neutral-800 rounded-3xl overflow-hidden">
+          <img [src]="mainImg || p.imageUrl" [alt]="p.title" class="w-full h-full object-cover zoomable" (error)="onImgError($event)" />
+          <span class="badge absolute top-3 left-3" *ngIf="p.inStock">In stock</span>
+        </div>
+        <p class="subtle mt-2 text-center">Roll over image to zoom</p>
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="lg:col-span-6 space-y-5">
+      <h1 class="text-2xl md:text-3xl font-semibold leading-tight">{{ p.title }}</h1>
+
+      <div class="flex items-center gap-3">
+        <div class="flex">
+          <ng-container *ngFor="let s of [1,2,3,4,5]">
+            <svg viewBox="0 0 24 24" class="rating-star"
+                 [ngClass]="{'opacity-40': s > Math.round((avgRating$ | async) ?? p.rating)}">
+              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21Z"/>
+            </svg>
+          </ng-container>
+        </div>
+        <span class="subtle">
+          ({{ (reviewCount$ | async) ?? p.reviews | number }}) ·
+          <span *ngIf="(avgRating$ | async) as ar; else pr"> {{ ar }}★</span>
+          <ng-template #pr>{{ p.rating || 0 }}★</ng-template>
+        </span>
+        <span class="chip">{{ p.category }}</span>
+      </div>
+
+      <div class="rounded-2xl p-4 glass">
+        <div class="flex items-end gap-3">
+          <div class="text-3xl font-bold">₹{{ p.price | number }}</div>
+          <div class="subtle line-through" *ngIf="p.oldPrice">₹{{ p.oldPrice | number }}</div>
+          <span class="badge" *ngIf="p.oldPrice">{{ ((1 - (p.price / p.oldPrice)) * 100) | number:'1.0-0' }}% off</span>
+        </div>
+        <div class="subtle mt-1">Inclusive of all taxes</div>
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        <span class="chip">No Cost EMI</span>
+        <span class="chip">Bank Offer</span>
+        <span class="chip">Exchange</span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <span class="badge" *ngIf="p.inStock; else oos">In stock</span>
+        <ng-template #oos><span class="badge-warn">Out of stock</span></ng-template>
+        <div class="flex items-center gap-2" *ngIf="p.delivery">
+          <svg viewBox="0 0 24 24" class="w-5 h-5"><path fill="currentColor" d="M3 6h13v8H3zM16 8h4l2 2v4h-6z"/></svg>
+          <span>Free delivery by <strong>{{ p.delivery }}</strong></span>
+        </div>
+      </div>
+
+      <div class="rounded-2xl p-4 border border-neutral-200 dark:border-neutral-800">
+        <div class="flex items-center gap-3 mb-3">
+          <label class="font-medium">Quantity</label>
+          <div class="inline-flex rounded-xl border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+            <button class="px-3 py-2 hover:bg-black/5 dark:hover:bg-white/5" (click)="dec()">−</button>
+            <span class="px-4 py-2">{{ qty }}</span>
+            <button class="px-3 py-2 hover:bg-black/5 dark:hover:bg:white/5" (click)="inc(p)">+</button>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button class="btn-primary" (click)="addToCart(p)">Add to Cart</button>
+          <button class="btn-ghost border border-neutral-200 dark:border-neutral-700" (click)="buyNow(p)">Buy Now</button>
+        </div>
+        <div class="subtle mt-2">Secure transaction — 7-day replacement</div>
+      </div>
+
+      <div class="glass rounded-2xl p-4">
+        <h3 class="heading mb-3">Highlights</h3>
+        <ul class="list-disc pl-5 space-y-1 subtle">
+          <li>{{ p.description }}</li>
+          <li>Easy returns & fast delivery</li>
+          <li>Warranty: 1 year</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reviews -->
+  <div class="mt-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <div class="lg:col-span-7">
+      <h3 class="heading mb-3">Customer reviews</h3>
+
+      <div *ngIf="(reviews$ | async) as reviews; else noReviews" class="space-y-4">
+        <article class="card-base p-4" *ngFor="let r of reviews; trackBy: trackByReview">
+          <div class="flex items-center justify-between">
+            <div class="font-medium">{{ r.userName }}</div>
+            <div class="subtle">{{ r.createdAt | date:'mediumDate' }}</div>
+          </div>
+          <div class="mt-1 flex items-center gap-1">
+            <ng-container *ngFor="let s of [1,2,3,4,5]">
+              <svg viewBox="0 0 24 24" class="rating-star" [ngClass]="{'opacity-40': s > r.rating}">
+                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21Z"/>
+              </svg>
+            </ng-container>
+          </div>
+          <p class="mt-2 leading-relaxed">{{ r.comment }}</p>
+        </article>
+      </div>
+
+      <ng-template #noReviews>
+        <div class="card-base p-6 text-center subtle">
+          No reviews yet — be the first to review this product.
+        </div>
+      </ng-template>
+    </div>
+
+    <aside class="lg:col-span-5">
+      <div class="card-base p-4">
+        <h4 class="font-semibold mb-2">Write a review</h4>
+
+        <div *ngIf="!auth.isLoggedIn" class="subtle">
+          Please
+          <a routerLink="/auth/login"
+             [queryParams]="{ returnUrl: router.url }"
+             class="link">sign in</a>
+          to write a review.
+        </div>
+
+        <div *ngIf="auth.isLoggedIn">
+          <div *ngIf="hasReviewed; else formTpl" class="subtle">
+            You already reviewed this product. Thank you!
+          </div>
+
+          <ng-template #formTpl>
+            <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="space-y-3">
+              <div>
+                <label class="block font-medium mb-1">Rating</label>
+                <div class="flex items-center gap-1">
+                  <button type="button"
+                          *ngFor="let s of [1,2,3,4,5]"
+                          class="rate-btn"
+                          [class.active]="reviewForm.value.rating === s"
+                          (click)="reviewForm.patchValue({ rating: s })">
+                    <svg viewBox="0 0 24 24" class="w-5 h-5"><path fill="currentColor" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21Z"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label class="block font-medium mb-1">Comment</label>
+                <textarea class="input min-h-[120px]" formControlName="comment" placeholder="Share your thoughts..."></textarea>
+                <div class="subtle mt-1">Max 500 characters.</div>
+              </div>
+
+              <button class="btn-primary hover-pop" type="submit" [disabled]="reviewForm.invalid || submittingReview">
+                {{ submittingReview ? 'Submitting…' : 'Submit review' }}
+              </button>
+            </form>
+          </ng-template>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<ng-template #missing>
+  <section class="max-w-7xl mx-auto px-4 py-12 text-center">
+    <p class="text-lg mb-4">Product not found.</p>
+    <button class="btn-primary" (click)="toCatalog()">Back to Catalog</button>
+  </section>
+</ng-template>

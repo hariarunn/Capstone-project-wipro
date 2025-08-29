@@ -1,0 +1,49 @@
+services:
+  gateway:
+    build: ./ecommerce-backend/gateway
+    container_name: gateway
+    ports: ["5000:5000"]
+    environment:
+      PRODUCTS_URL: http://products:8001
+      ORDERS_URL:   http://orders:8002
+      JWT_SECRET: "super-secret-change-this"
+      JWT_EXPIRES_HOURS: "24"
+    volumes:
+      - gateway_uploads:/app/uploads
+      - gateway_data:/app/instance      # users.db lives here
+    depends_on:
+      - products
+      - orders
+    restart: unless-stopped
+
+  products:
+    build: ./ecommerce-backend/products
+    container_name: products
+    ports: ["8001:8001"]
+    volumes:
+      - products_db:/app/instance       # persists products.db
+    restart: unless-stopped
+
+  orders:
+    build: ./ecommerce-backend/orders
+    container_name: orders
+    ports: ["8002:8002"]
+    environment:
+      PRODUCTS_URL: http://products:8001
+    volumes:
+      - orders_db:/app/instance         # persists orders.db
+    restart: unless-stopped
+
+  frontend:
+    build: ./ecommerce-frontend
+    container_name: frontend
+    ports: ["8080:80"]
+    depends_on:
+      - gateway
+    restart: unless-stopped
+
+volumes:
+  gateway_uploads:
+  gateway_data:
+  products_db:
+  orders_db:

@@ -1,0 +1,7 @@
+:host { display: inline-block; }
+.stars { display: inline-flex; gap: 2px; --sz: 22; }
+.star { line-height: 0; border: 0; background: transparent; padding: 2px; border-radius: 6px; cursor: pointer; }
+.star:focus-visible { outline: 2px solid rgb(99 102 241); outline-offset: 2px; }
+.icon { width: var(--sz); height: var(--sz); color: rgb(234 179 8); } /* amber-400 */
+.icon.dim { opacity: .35; }
+:host-context(.dark) .icon { color: rgb(250 204 21); } /* amber-300 */

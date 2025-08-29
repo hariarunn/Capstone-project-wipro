@@ -1,0 +1,82 @@
+<section class="max-w-7xl mx-auto px-4 py-8 animate-fade-in">
+  <h1 class="text-2xl font-bold mb-4">Checkout</h1>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- Address & Payment -->
+    <form class="lg:col-span-8 space-y-6" [formGroup]="form" (ngSubmit)="placeOrder()">
+      <div class="card-base p-5">
+        <h3 class="heading mb-3">Shipping Address</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div><label class="block font-medium mb-1">Full name</label><input class="input" formControlName="name" /></div>
+          <div><label class="block font-medium mb-1">Phone</label><input class="input" formControlName="phone" placeholder="10 digits" /></div>
+          <div class="md:col-span-2"><label class="block font-medium mb-1">Address line 1</label><input class="input" formControlName="line1" /></div>
+          <div class="md:col-span-2"><label class="block font-medium mb-1">Address line 2 (optional)</label><input class="input" formControlName="line2" /></div>
+          <div><label class="block font-medium mb-1">City</label><input class="input" formControlName="city" /></div>
+          <div><label class="block font-medium mb-1">State</label><input class="input" formControlName="state" /></div>
+          <div><label class="block font-medium mb-1">Pincode</label><input class="input" formControlName="pincode" /></div>
+        </div>
+      </div>
+
+      <div class="card-base p-5">
+        <h3 class="heading mb-3">Payment</h3>
+        <div class="flex gap-3 mb-4">
+          <label class="pm" [class.active]="method==='card'"><input type="radio" name="pm" (change)="method='card'" checked/> Card</label>
+          <label class="pm" [class.active]="method==='upi'"><input type="radio" name="pm" (change)="method='upi'"/> UPI</label>
+          <label class="pm" [class.active]="method==='cod'"><input type="radio" name="pm" (change)="method='cod'"/> Cash on delivery</label>
+        </div>
+
+        <div *ngIf="method==='card'" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="md:col-span-2"><label class="block font-medium mb-1">Card number</label><input class="input" formControlName="cardNumber" placeholder="1234 5678 9012 3456" /></div>
+          <div><label class="block font-medium mb-1">Cardholder name</label><input class="input" formControlName="cardName" /></div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><label class="block font-medium mb-1">Expiry</label><input class="input" formControlName="cardExp" placeholder="MM/YY" /></div>
+            <div><label class="block font-medium mb-1">CVV</label><input class="input" formControlName="cardCvv" placeholder="123" /></div>
+          </div>
+        </div>
+
+        <div *ngIf="method==='upi'">
+          <label class="block font-medium mb-1">UPI ID</label>
+          <input class="input w-72" placeholder="name@bank" />
+          <p class="text-sm text-neutral-500 mt-2">You’ll be redirected to your UPI app to approve the payment (mock).</p>
+        </div>
+
+        <div *ngIf="method==='cod'">
+          <p class="text-sm text-neutral-600">Pay with cash upon delivery. No additional charges.</p>
+        </div>
+      </div>
+    </form>
+
+    <!-- Summary -->
+    <aside class="lg:col-span-4">
+      <div class="card-base p-5 sticky top-24">
+        <h3 class="heading mb-3">Order Summary</h3>
+
+        <div class="space-y-3 max-h-64 overflow-auto pr-1">
+          <div class="flex items-center gap-3" *ngFor="let i of (items$ | async)">
+            <img [src]="i.imageUrl" class="w-14 h-14 rounded-lg object-cover border border-neutral-200 dark:border-neutral-800" />
+            <div class="flex-1">
+              <div class="text-sm font-medium leading-tight line-clamp-2">{{ i.title }}</div>
+              <div class="text-xs text-neutral-500">Qty {{ i.qty }}</div>
+            </div>
+            <div class="text-sm font-semibold">₹{{ (i.price * i.qty) | number }}</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <ng-container *ngIf="(totals$ | async) as t">
+          <div class="row"><span>Subtotal</span><span>₹{{ t.subtotal | number }}</span></div>
+          <div class="row"><span>Discount</span><span class="text-emerald-600">− ₹{{ t.discount | number }}</span></div>
+          <div class="row"><span>Shipping</span><span>{{ t.shipping ? ('₹' + (t.shipping | number)) : 'Free' }}</span></div>
+          <div class="row"><span>Tax</span><span>₹{{ t.tax | number }}</span></div>
+          <div class="divider"></div>
+          <div class="row total"><span>Total</span><span>₹{{ t.total | number }}</span></div>
+        </ng-container>
+
+        <button class="btn-primary w-full hover-pop mt-4" [disabled]="!canPlace()" (click)="placeOrder()">
+          Place Order
+        </button>
+      </div>
+    </aside>
+  </div>
+</section>

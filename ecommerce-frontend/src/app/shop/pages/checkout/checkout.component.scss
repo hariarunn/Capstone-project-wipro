@@ -1,0 +1,11 @@
+:host { display: block; }
+
+.pm {
+  @apply inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-100 dark:bg-neutral-800 text-sm cursor-pointer;
+  input { display: none; }
+}
+.pm.active { @apply bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-200; }
+
+.row { @apply flex justify-between py-1 text-sm; }
+.divider { @apply my-2 border-t border-neutral-200 dark:border-neutral-800; }
+.total { @apply text-base font-semibold; }

@@ -1,0 +1,42 @@
+<footer class="mt-16 border-t border-neutral-200 dark:border-neutral-800">
+  <div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-2 md:grid-cols-4 gap-8">
+    <div>
+      <div class="flex items-center gap-2 mb-3">
+        <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-600 text-white font-bold">e</span>
+        <span class="font-semibold">eShop</span>
+      </div>
+      <p class="subtle">Your everyday store for everything. Fast delivery. Great prices.</p>
+    </div>
+
+    <div>
+      <h4 class="font-semibold mb-3">Shop</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a class="link" [routerLink]="['/catalog']">All Products</a></li>
+        <!-- Map “Electronics” to your real category (using Audio here) -->
+        <li><a class="link" [routerLink]="['/catalog']" [queryParams]="{ category: 'Audio' }">Electronics</a></li>
+        <li><a class="link" [routerLink]="['/catalog']" [queryParams]="{ category: 'Fashion' }">Fashion</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="font-semibold mb-3">Support</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a class="link" routerLink="/help">Help Center</a></li>
+        <li><a class="link" routerLink="/returns">Returns</a></li>
+        <li><a class="link" routerLink="/shipping">Shipping</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="font-semibold mb-3">Legal</h4>
+      <ul class="space-y-2 text-sm">
+        <li><a class="link" routerLink="/privacy">Privacy</a></li>
+        <li><a class="link" routerLink="/terms">Terms</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="py-4 border-t border-neutral-200 dark:border-neutral-800 text-center subtle">
+    © {{ year }} eShop. All rights reserved.
+  </div>
+</footer>

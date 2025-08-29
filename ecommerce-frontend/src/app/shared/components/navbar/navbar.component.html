@@ -1,0 +1,63 @@
+<header class="sticky top-0 z-40 glass">
+  <div class="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
+    <!-- Brand -->
+    <a routerLink="/" class="flex items-center gap-2">
+      <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-indigo-600 text-white font-bold">e</span>
+      <span class="text-lg font-semibold">eShop</span>
+    </a>
+
+    <!-- Search -->
+    <div class="hidden md:flex flex-1 max-w-2xl mx-6">
+      <div class="flex items-stretch rounded-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden bg-white dark:bg-neutral-900 w-full">
+        <select #catSel class="hidden md:block px-3 select w-36 rounded-none border-none">
+          <option>All</option><option>Electronics</option><option>Fashion</option><option>Home</option>
+        </select>
+        <input #qInput class="flex-1 px-4 py-2 outline-none bg-transparent"
+               placeholder="Search products, brands and more…"
+               (keyup.enter)="goSearch(qInput.value, catSel.value)" />
+        <button class="px-4 text-neutral-500 hover:text-indigo-600"
+                (click)="goSearch(qInput.value, catSel.value)">
+          <svg viewBox="0 0 24 24" class="w-5 h-5"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.5 6.5 0 1 0 9.5 16a6.4 6.4 0 0 0 4-1.4l.27.28h.79l5 5L20.5 19zM9.5 14A4.5 4.5 0 1 1 14 9.5A4.5 4.5 0 0 1 9.5 14Z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <nav class="flex items-center gap-1">
+      <a routerLink="/catalog" class="btn-ghost px-3 py-2 rounded-xl">Catalog</a>
+
+      <a routerLink="/shop/orders" class="btn-icon" title="Orders">
+        <svg viewBox="0 0 24 24" class="w-5 h-5"><path fill="currentColor" d="M19 6h-2V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2H5a2 2 0 0 0-2 2v9a3 3 0 0 0 3 3h12a3 3 0 0 0 3-3V8a2 2 0 0 0-2-2M9 4h6v2H9Z"/></svg>
+      </a>
+
+      <a routerLink="/shop/cart" class="btn-icon relative" title="Cart">
+        <svg viewBox="0 0 24 24" class="w-6 h-6"><path fill="currentColor" d="M7 18a2 2 0 1 0 2 2a2 2 0 0 0-2-2m10 0a2 2 0 1 0 2 2a2 2 0 0 0-2-2M7.16 14h9.45a2 2 0 0 0 1.92-1.47l1.94-7.19H6.23L5.62 2H2v2h2l3.6 7.59L6.16 13a2 2 0 0 0 1 3.78Z"/></svg>
+        <span class="absolute -top-1 -right-1 badge" [ngClass]="{'badge-pop': bump}">{{ cartCount$ | async }}</span>
+      </a>
+
+      <!-- Auth actions -->
+      <ng-container *ngIf="!auth.isLoggedIn; else loggedIn">
+        <a routerLink="/auth/login" class="btn-ghost px-3 py-2 rounded-xl">Sign in</a>
+        <a routerLink="/auth/register" class="btn-primary hover-pop px-3 py-2 rounded-xl">Register</a>
+      </ng-container>
+
+      <ng-template #loggedIn>
+        <span class="subtle hidden sm:inline mx-2">Hi, {{ displayName }}</span>
+        <a *ngIf="auth.isAdmin()" routerLink="/admin" class="chip hover-pop">Admin</a>
+        <button class="btn-ghost px-3 py-2 rounded-xl" (click)="logout()">Logout</button>
+      </ng-template>
+    </nav>
+  </div>
+
+  <!-- Mobile search -->
+  <div class="md:hidden px-4 pb-3">
+    <div class="flex items-stretch rounded-2xl border border-neutral-200 dark:border-neutral-700 overflow-hidden bg-white dark:bg-neutral-900">
+      <input #mQ class="flex-1 px-4 py-2 outline-none bg-transparent"
+             placeholder="Search products…"
+             (keyup.enter)="goSearch(mQ.value, 'All')" />
+      <button class="px-4 text-neutral-500 hover:text-indigo-600" (click)="goSearch(mQ.value, 'All')">
+        <svg viewBox="0 0 24 24" class="w-5 h-5"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.5 6.5 0 1 0 9.5 16l.28-.27h.79l5 5L20.5 19z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>

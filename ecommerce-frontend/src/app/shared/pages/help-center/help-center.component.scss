@@ -1,0 +1,8 @@
+:host { display:block; }
+.heading { @apply text-xl font-semibold; }
+.faq {
+  @apply border-b border-neutral-200 dark:border-neutral-800 py-3;
+  summary { @apply cursor-pointer font-medium; }
+  p { @apply mt-2 text-neutral-500 dark:text-neutral-400; }
+
+}

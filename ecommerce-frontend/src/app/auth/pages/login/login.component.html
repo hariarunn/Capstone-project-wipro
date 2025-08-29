@@ -1,0 +1,77 @@
+<section class="min-h-[calc(100vh-72px)] grid grid-cols-1 lg:grid-cols-2">
+  <!-- Banner (interactive) -->
+  <div #bannerEl class="relative hidden lg:block overflow-hidden banner-fx" aria-hidden="true">
+    <canvas #fxCanvas class="absolute inset-0 w-full h-full block" role="presentation"></canvas>
+    <div class="aurora" aria-hidden="true"></div>
+    <div class="blob blob-1" aria-hidden="true"></div>
+    <div class="blob blob-2" aria-hidden="true"></div>
+    <div class="grid-overlay" aria-hidden="true"></div>
+
+    <div class="relative z-10 h-full flex items-end p-10 select-none pointer-events-none">
+      <div class="text-white max-w-lg will-change-transform" [style.transform]="titleTransform">
+        <h2 class="text-3xl font-bold">Deals you can’t miss</h2>
+        <p class="mt-2 text-white/80">Sign in for personalized picks, fast checkout and order tracking.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form (unchanged) -->
+  <div class="flex items-center justify-center p-6 sm:p-10">
+    <div class="w-full max-w-md bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm p-6 sm:p-8 animate-fade-in">
+      <div class="flex items-center gap-3 mb-2">
+        <span class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-indigo-600 text-white font-bold">e</span>
+        <h1 class="text-2xl font-semibold">Sign in to eShop</h1>
+      </div>
+      <p class="text-sm text-neutral-500 dark:text-neutral-400">Welcome back! Please enter your details.</p>
+
+      <form [formGroup]="form" class="mt-6 space-y-4" (ngSubmit)="submit()">
+        <div>
+          <label class="block text-sm font-medium mb-1">Email</label>
+          <input class="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-950 px-4 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+                 placeholder="you@example.com" formControlName="email" type="email"/>
+          <div *ngIf="f.email.touched && f.email.invalid" class="mt-1 text-sm text-rose-600">
+            Enter a valid email.
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Password</label>
+          <div class="relative">
+            <input [type]="showPassword ? 'text' : 'password'"
+                   class="w-full rounded-xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-950 px-4 py-2 outline-none focus:ring-2 focus:ring-indigo-500 pr-10"
+                   placeholder="••••••••" formControlName="password"/>
+            <button type="button" class="absolute inset-y-0 right-2 my-auto rounded-lg px-2 hover:bg-black/5 dark:hover:bg-white/5"
+                    (click)="togglePassword()" aria-label="Toggle password">
+              <svg *ngIf="!showPassword" viewBox="0 0 24 24" class="w-5 h-5 text-neutral-500"><path fill="currentColor" d="M12 7a5 5 0 0 1 5 5a5 5 0 1 1-5-5m0-3C7 4 2.73 7.11 1 12c1.73 4.89 6 8 11 8s9.27-3.11 11-8c-1.73-4.89-6-8-11-8"/></svg>
+              <svg *ngIf="showPassword" viewBox="0 0 24 24" class="w-5 h-5 text-neutral-500"><path fill="currentColor" d="M2 5.27L3.28 4L20 20.72L18.73 22l-3.21-3.21c-1.07.3-2.2.45-3.52.45c-5 0-9.27-3.11-11-8c.67-1.89 1.82-3.54 3.28-4.84L2 5.27M12 7a5 5 0 0 1 5 5c0 .76-.18 1.47-.47 2.1l-6.63-6.63C10.53 7.17 11.24 7 12 7Z"/></svg>
+            </button>
+          </div>
+          <div *ngIf="f.password.touched && f.password.invalid" class="mt-1 text-sm text-rose-600">
+            Minimum 8 characters.
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <label class="inline-flex items-center gap-2 text-sm">
+            <input type="checkbox" formControlName="remember" class="rounded border-neutral-300 dark:border-neutral-700">
+            Remember me
+          </label>
+          <a class="text-sm text-indigo-600 hover:underline">Forgot password?</a>
+        </div>
+
+        <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 font-medium text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 w-full"
+                [disabled]="loading">
+          <span *ngIf="!loading">Sign in</span>
+          <span *ngIf="loading" class="inline-flex items-center gap-2">
+            <span class="size-4 rounded-full border-2 border-white/20 border-t-white animate-spin"></span> Signing in…
+          </span>
+        </button>
+      </form>
+
+      <div class="mt-6 text-sm text-neutral-500 dark:text-neutral-400">
+        New to eShop?
+        <a routerLink="/auth/register" class="text-indigo-600 hover:underline">Create an account</a>
+      </div>
+    </div>
+  </div>
+</section>

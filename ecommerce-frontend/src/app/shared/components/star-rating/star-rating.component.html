@@ -1,0 +1,13 @@
+<div class="stars" [style.--sz.px]="size" role="radiogroup" aria-label="Rate 1 to 5">
+  <button
+    *ngFor="let s of [1,2,3,4,5]"
+    class="star"
+    type="button"
+    [attr.aria-checked]="(fillUntil)>=s"
+    [attr.aria-label]="s + ' star'"
+    (mouseenter)="enter(s)" (mouseleave)="leave()" (click)="set(s)">
+    <svg viewBox="0 0 24 24" class="icon" [class.dim]="fillUntil < s">
+      <path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21Z"/>
+    </svg>
+  </button>
+</div>

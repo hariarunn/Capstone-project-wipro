@@ -1,0 +1,53 @@
+<section class="max-w-7xl mx-auto px-4 py-10 animate-fade-in">
+  <header class="mb-6">
+    <h1 class="text-3xl font-bold">Help Center</h1>
+    <p class="subtle mt-1">Answers to common questions and ways to get in touch.</p>
+  </header>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <aside class="lg:col-span-4">
+      <div class="card-base p-4 sticky top-24">
+        <h3 class="font-semibold mb-3">Contact us</h3>
+        <ul class="space-y-2 text-sm">
+          <li><span class="chip">Email</span> support@eshop.local</li>
+          <li><span class="chip">Phone</span> +91 90000 00000</li>
+          <li><span class="chip">Hours</span> Mon–Sat, 9am–6pm</li>
+        </ul>
+        <a routerLink="/returns" class="btn-ghost mt-4 w-full border border-neutral-200 dark:border-neutral-700">Returns</a>
+        <a routerLink="/shipping" class="btn-ghost mt-2 w-full border border-neutral-200 dark:border-neutral-700">Shipping</a>
+      </div>
+    </aside>
+
+    <div class="lg:col-span-8 space-y-4">
+      <div class="card-base p-4">
+        <h3 class="heading mb-2">FAQs</h3>
+
+        <details class="faq">
+          <summary>How do I track my order?</summary>
+          <p>Your order page shows live status. You’ll also get email updates at each step.</p>
+        </details>
+
+        <details class="faq">
+          <summary>Can I change my delivery address?</summary>
+          <p>Address changes are possible before dispatch. Contact support with your order ID.</p>
+        </details>
+
+        <details class="faq">
+          <summary>What payment methods are supported?</summary>
+          <p>UPI, major cards, and Cash on Delivery (selected PIN codes).</p>
+        </details>
+
+        <details class="faq">
+          <summary>How do I start a return?</summary>
+          <p>Visit the <a routerLink="/returns" class="link">Returns</a> page for steps and eligibility.</p>
+        </details>
+      </div>
+
+      <div class="card-base p-4">
+        <h3 class="heading mb-2">Need more help?</h3>
+        <p class="subtle">Email us and we’ll reply within 24 hours (business days).</p>
+        <a class="btn-primary mt-3 inline-flex" href="mailto:support@eshop.local">Email support</a>
+      </div>
+    </div>
+  </div>
+</section>

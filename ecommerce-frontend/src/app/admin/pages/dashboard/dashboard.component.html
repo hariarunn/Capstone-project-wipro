@@ -1,0 +1,77 @@
+<section class="max-w-7xl mx-auto px-4 py-8 animate-fade-in">
+  <div class="mb-5 flex flex-wrap items-center gap-3">
+    <h1 class="text-2xl font-bold">Admin · Products</h1>
+    <span class="chip">Catalog</span>
+    <div class="ml-auto flex gap-2">
+      <a routerLink="/admin/orders" class="btn-ghost hover-pop">View Orders</a>
+      <button class="btn-primary hover-pop" (click)="addNew()">+ Add Product</button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="card-base p-4 mb-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+      <input class="input" [formControl]="q" placeholder="Search by title or description" />
+      <select class="select" [formControl]="category">
+        <option>All</option>
+        <option *ngFor="let c of (categories$ | async)">{{ c }}</option>
+      </select>
+      <select class="select" [formControl]="sort">
+        <option value="updated">Newest First</option>
+        <option value="priceAsc">Price: Low → High</option>
+        <option value="priceDesc">Price: High → Low</option>
+        <option value="stockAsc">Stock: Low → High</option>
+        <option value="stockDesc">Stock: High → Low</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="overflow-auto rounded-2xl border border-neutral-200 dark:border-neutral-800">
+    <table class="min-w-full text-sm">
+      <thead class="bg-neutral-50 dark:bg-neutral-900">
+        <tr class="text-left">
+          <th class="p-3 w-16">Image</th>
+          <th class="p-3">Title</th>
+          <th class="p-3">Category</th>
+          <th class="p-3 text-right">Price</th>
+          <th class="p-3 text-center">Stock</th>
+          <th class="p-3 text-center">Rating</th>
+          <th class="p-3 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of (filtered$ | async)" class="border-t border-neutral-200 dark:border-neutral-800 hover:bg-black/5 dark:hover:bg:white/5 transition-colors">
+          <td class="p-3">
+            <img [src]="p.imageUrl"
+                 (error)="onImgErr($event)"
+                 class="w-12 h-12 rounded-lg object-cover border border-neutral-200 dark:border-neutral-800" />
+          </td>
+          <td class="p-3">
+            <div class="font-medium leading-tight line-clamp-2">{{ p.title }}</div>
+            <div class="subtle line-clamp-1">{{ p.description }}</div>
+          </td>
+          <td class="p-3">
+            <span class="chip">{{ p.category }}</span>
+          </td>
+          <td class="p-3 text-right">
+            <div class="font-semibold">₹{{ p.price | number }}</div>
+            <div class="subtle line-through" *ngIf="p.oldPrice">₹{{ p.oldPrice | number }}</div>
+          </td>
+          <td class="p-3 text-center">
+            <span class="badge" *ngIf="isInStock(p); else oos">In</span>
+            <ng-template #oos><span class="badge-warn">Out</span></ng-template>
+            <span class="ml-2" [class.text-amber-600]="stock(p) <= 5">({{ stock(p) }})</span>
+          </td>
+          <td class="p-3 text-center">
+            <span class="chip">{{ p.rating || 0 }}★</span>
+          </td>
+          <td class="p-3 text-right space-x-2">
+            <button class="btn-ghost px-3 py-1.5 rounded-xl border border-neutral-200 dark:border-neutral-700" (click)="edit(p)">Edit</button>
+            <button class="btn-ghost px-3 py-1.5 rounded-xl border border-neutral-200 dark:border-neutral-700" (click)="remove(p)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
